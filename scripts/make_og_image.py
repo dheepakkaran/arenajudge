@@ -9,7 +9,7 @@ import json, os
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1200, 630
-BG, SURFACE, TEXT, MUTED, ACCENT, COOL = "#0B0D1A", "#141830", "#EEF0FF", "#9AA0C3", "#FF7A45", "#7C8CFF"
+BG, SURFACE, TEXT, MUTED, ACCENT, COOL = "#000000", "#111111", "#FFFFFF", "#A3A3A3", "#FFFFFF", "#808080"
 
 FONT_CANDIDATES = {
     "bold": ["/System/Library/Fonts/Supplemental/Arial Bold.ttf", "/Library/Fonts/Arial Bold.ttf",

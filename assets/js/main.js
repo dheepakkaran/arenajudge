@@ -1,7 +1,7 @@
 // ArenaJudge site: loads the two JSON files, fills every number slot, draws the charts,
 // and runs the Typeform-style navigation (progress bar, arrows, keyboard, reveal-on-scroll).
 // Paths are relative so the site works under /arenajudge/ on GitHub Pages.
-import { $, $$, get, fmt, h, isUrl, relTime, richText, countUp, reduceMotion } from './util.js';
+import { $, $$, get, fmt, h, s, isUrl, relTime, richText, countUp, reduceMotion } from './util.js';
 import * as charts from './charts.js';
 
 window.__arenajudge = true;   // tells the inline failsafe in index.html that JS is running
@@ -329,14 +329,26 @@ function renderLeaderboard(p, lb) {
 }
 
 /* ---------- 5. team ---------- */
+/** Small "LinkedIn" link shown next to a person's name (same markup as the byline in index.html). */
+function linkedInChip(name, url) {
+  return h('a', { class: 'li-chip', href: url, target: '_blank', rel: 'noopener', 'aria-label': `${name} on LinkedIn (opens in a new tab)` },
+    s('svg', { class: 'li-icon', viewBox: '0 0 16 16', width: 12, height: 12, 'aria-hidden': 'true' },
+      s('circle', { cx: 8, cy: 5.2, r: 2.8, fill: 'currentColor' }),
+      s('path', { d: 'M2.6 14.2c.5-3 2.7-4.7 5.4-4.7s4.9 1.7 5.4 4.7z', fill: 'currentColor' })),
+    'LinkedIn');
+}
+
 function renderTeam(p) {
   const L = p.links;
+  const linkedIn = (name) => (name === p.project.author ? L.author_linkedin : name === p.project.teammate ? L.teammate_linkedin : null);
   const linksFor = (name) => (name === p.project.author
-    ? [['LinkedIn', L.author_linkedin], ['Kaggle', L.author_kaggle], ['GitHub', L.author_github]]
-    : name === p.project.teammate ? [['LinkedIn', L.teammate_linkedin], ['Kaggle', L.teammate_kaggle]] : []);
+    ? [['Kaggle', L.author_kaggle], ['GitHub', L.author_github]]
+    : name === p.project.teammate ? [['Kaggle', L.teammate_kaggle]] : []);
   $('#team-cards').replaceChildren(...p.team.map((m, i) =>
     h('article', { class: 'team-card', 'aria-labelledby': `team-${i}` },
-      h('h3', { id: `team-${i}`, text: m.name }),
+      h('div', { class: 'card-head' },
+        h('h3', { id: `team-${i}`, text: m.name }),
+        isUrl(linkedIn(m.name)) ? linkedInChip(m.name, linkedIn(m.name)) : null),
       h('p', { class: 'role', text: m.role }),
       h('ul', {}, m.did.map((t) => h('li', { text: t }))),
       h('p', { class: 'card-links' }, linksFor(m.name).filter(([, u]) => isUrl(u)).map(([label, u]) =>
