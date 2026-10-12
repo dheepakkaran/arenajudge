@@ -428,6 +428,7 @@
     {
       "name": "Dheepak Karan",
       "role": "Inference + pipeline owner",
+      "photo": "assets/img/dheepak.jpg",
       "did": [
         "Chose the competition and planned the project",
         "Built the training pipeline and leak-free data split",
@@ -440,6 +441,7 @@
     {
       "name": "Karuniya Premnath",
       "role": "Training owner (v2 model)",
+      "photo": "assets/img/karuniya.jpg",
       "did": [
         "Trained the v2 model (30,000 rows) on her Kaggle GPU quota",
         "Ran the long training jobs, including the run that exposed the zero-init bug and the fixed rerun",
