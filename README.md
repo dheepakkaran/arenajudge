@@ -178,6 +178,7 @@ index.html                 the website (one page)
 assets/css/style.css       styles (all colors are tokens on :root)
 assets/js/main.js          loads the JSON, fills in numbers, navigation, quiz, demo window
 assets/js/charts.js        hand-built SVG/HTML charts + their data tables
+assets/js/people.js        profile cards that open when you hover or tap a name
 assets/js/util.js          small helpers (formatting, DOM, count-up, axis ticks)
 assets/favicon.svg         site icon
 assets/og-image.png        link-preview image (made by scripts/make_og_image.py)
