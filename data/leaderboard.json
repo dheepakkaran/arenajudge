@@ -1,19 +1,125 @@
 {
-  "_note": "Written by scripts/update_leaderboard.py (GitHub Actions, daily). This first version is a manual snapshot.",
-  "source": "manual",
+  "_note": "Written by scripts/update_leaderboard.py (GitHub Actions, daily).",
+  "source": "kaggle-cli",
   "competition": "llm-classification-finetuning",
   "team": "Dk",
-  "updated_at": "2026-10-12T01:20:00Z",
+  "updated_at": "2026-10-12T04:13:54Z",
   "on_leaderboard": true,
   "rank": 51,
-  "teams": 240,
-  "teams_approx": true,
+  "teams": 250,
+  "teams_approx": false,
   "score": 1.00281,
-  "top_percent": 21.3,
-  "leader_score": null,
-  "neighbors": [],
-  "histogram": null,
-  "submissions": [],
+  "top_percent": 20.4,
+  "leader_score": 0.82868,
+  "neighbors": [
+    {
+      "team": "mseokq",
+      "score": 0.99852,
+      "rank": 48
+    },
+    {
+      "team": "Eddie2021",
+      "score": 1.00157,
+      "rank": 49
+    },
+    {
+      "team": "\u0141ukasz B\u0119\u0107",
+      "score": 1.00174,
+      "rank": 50
+    },
+    {
+      "team": "Dk",
+      "score": 1.00281,
+      "rank": 51
+    },
+    {
+      "team": "pdd111",
+      "score": 1.0038,
+      "rank": 52
+    },
+    {
+      "team": "OpenVerb Interns",
+      "score": 1.00707,
+      "rank": 53
+    },
+    {
+      "team": "Samith2005",
+      "score": 1.01034,
+      "rank": 54
+    }
+  ],
+  "histogram": {
+    "edges": [
+      0.82868,
+      0.84364,
+      0.8586,
+      0.87356,
+      0.88852,
+      0.90348,
+      0.91844,
+      0.93339,
+      0.94835,
+      0.96331,
+      0.97827,
+      0.99323,
+      1.00819,
+      1.02315,
+      1.03811,
+      1.05307,
+      1.06803,
+      1.08299,
+      1.09794,
+      1.1129,
+      1.12786,
+      1.14282,
+      1.15778,
+      1.17274,
+      1.1877
+    ],
+    "counts": [
+      21,
+      0,
+      1,
+      4,
+      2,
+      2,
+      2,
+      3,
+      5,
+      2,
+      2,
+      9,
+      31,
+      45,
+      23,
+      18,
+      15,
+      19,
+      22,
+      4,
+      2,
+      2,
+      0,
+      4
+    ]
+  },
+  "submissions": [
+    {
+      "date": "2026-10-07 20:19:10",
+      "score": 1.01558,
+      "description": "v1: Qwen2.5-1.5B LoRA (20k train), fp16, length-sorted bs16, 2xT4, swap-TTA | val LL 1.0236"
+    },
+    {
+      "date": "2026-10-07 22:03:41",
+      "score": 1.0119,
+      "description": "v1 + LightGBM length/style stacker | val LL 1.0075 -> 1.0022"
+    },
+    {
+      "date": "2026-10-10 04:11:21",
+      "score": 1.00281,
+      "description": "v2a (friend: 30k rows, small-random head init) + swap-TTA + LGBM stacker | val LL 0.9847 -> 0.9793"
+    }
+  ],
   "history": [
     {
       "date": "2026-10-07",
@@ -36,6 +142,14 @@
       "score": 1.00281,
       "teams": 240,
       "source": "manual"
+    },
+    {
+      "date": "2026-10-12",
+      "rank": 51,
+      "score": 1.00281,
+      "teams": 250,
+      "on_leaderboard": true,
+      "source": "kaggle-cli"
     }
   ]
 }
