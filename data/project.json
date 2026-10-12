@@ -72,6 +72,7 @@
   "leaderboard_history": [
     {
       "date": "2026-10-06",
+      "short": "Coin flip",
       "stage": "Uniform baseline (1/3 each)",
       "score": 1.0986,
       "rank": null,
@@ -79,6 +80,7 @@
     },
     {
       "date": "2026-10-07",
+      "short": "v1 + TTA",
       "stage": "v1: Qwen2.5-1.5B LoRA (20k rows) + swap-TTA",
       "score": 1.01558,
       "rank": 53,
@@ -87,6 +89,7 @@
     },
     {
       "date": "2026-10-07",
+      "short": "+ stacker",
       "stage": "v1 + LightGBM length/style stacker",
       "score": 1.0119,
       "rank": 48,
@@ -95,6 +98,7 @@
     },
     {
       "date": "2026-10-10",
+      "short": "v2",
       "stage": "v2: 30k rows + small-random head init (+ TTA + stacker)",
       "score": 1.00281,
       "rank": 48,
@@ -103,6 +107,7 @@
     },
     {
       "date": "2026-10-11",
+      "short": "Today",
       "stage": "Same submission, rank as of today (other teams kept submitting)",
       "score": 1.00281,
       "rank": 51,
@@ -440,6 +445,17 @@
         "Ran the long training jobs, including the run that exposed the zero-init bug and the fixed rerun",
         "Her v2 model powers the team's best score (1.00281)"
       ]
+    }
+  ],
+  "next_steps": [
+    {
+      "name": "v2b",
+      "plan": "longer answers plus each answer's word count in the input",
+      "max_response_tokens": 400
+    },
+    {
+      "name": "Resubmit",
+      "plan": "resubmit the best version before the 2-month rolling window drops it"
     }
   ],
   "notebooks": {
