@@ -23,13 +23,24 @@ jobs:
           python-version: "3.12"
 
       - name: Install Kaggle CLI
-        run: pip install --quiet kaggle
+        run: pip install --quiet "kaggle==2.2.4"   # pinned: flags checked against this version
 
+      # Auth: either a new-style API token (secret KAGGLE_API_TOKEN, from kaggle.com/settings/api)
+      # or the legacy kaggle.json pair (secrets KAGGLE_USERNAME + KAGGLE_KEY). Unset secrets
+      # arrive as empty strings, so drop them before the CLI reads its KAGGLE_* variables.
       - name: Fetch leaderboard
         env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-        run: python scripts/update_leaderboard.py
+        run: |
+          [ -n "$KAGGLE_API_TOKEN" ] || unset KAGGLE_API_TOKEN
+          [ -n "$KAGGLE_USERNAME" ] && [ -n "$KAGGLE_KEY" ] || unset KAGGLE_USERNAME KAGGLE_KEY
+          if [ -z "${KAGGLE_API_TOKEN:-}" ] && [ -z "${KAGGLE_USERNAME:-}" ]; then
+            echo "::error::No Kaggle credentials. Add the KAGGLE_API_TOKEN secret (or KAGGLE_USERNAME + KAGGLE_KEY)."
+            exit 1
+          fi
+          python scripts/update_leaderboard.py
 
       - name: Commit if changed
         run: |
