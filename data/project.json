@@ -20,7 +20,7 @@
     "author_linkedin": "https://www.linkedin.com/in/dheepakkaran",
     "author_kaggle": "https://www.kaggle.com/dheepakkaranes",
     "teammate_kaggle": "https://www.kaggle.com/karuniyapremnath",
-    "teammate_linkedin": "TODO: ask Karuniya for her LinkedIn URL (leave out the link if not provided)"
+    "teammate_linkedin": "https://www.linkedin.com/in/karuniya-premnath/"
   },
   "competition": {
     "name": "LLM Classification Finetuning",
@@ -36,9 +36,14 @@
   "model": {
     "base": "Qwen2.5-1.5B-Instruct",
     "method": "LoRA fine-tuning, 3-class sequence-classification head",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_targets": "all attention + MLP projections",
     "input_format": "Prompt: {prompt} / Response A: {a} / Response B: {b} / Which response is better?",
     "max_prompt_tokens": 96,
     "max_response_tokens": 200,
+    "epochs": 1,
+    "data_shuffle_seed": 42,
     "precision_training": "fp16 on NVIDIA T4",
     "learning_rates": {
       "lora": 0.0001,
@@ -144,9 +149,21 @@
       "rows": 30000,
       "minutes": 210,
       "gpu": "1x T4",
-      "owner": "Karuniya"
+      "owner": "Karuniya",
+      "failed_first_run_hours_approx": 4,
+      "failed_first_run_note": "first run with a zero-initialized head; loss stayed flat (never learned)"
     }
   ],
+  "stacker": {
+    "model": "LightGBM",
+    "train_rows": 10000,
+    "train_rows_range": "2,000-11,999 (never seen by any classifier)",
+    "inputs_total": 28,
+    "prob_inputs": 3,
+    "style_features": 25,
+    "style_feature_kinds": "length (characters, words, lines), markdown (headers, lists, bold, code blocks), empty answer, identical answers, prompt length",
+    "symmetric": "trained on normal + A/B-swapped rows, predicts both ways and averages"
+  },
   "gpu_benchmark": {
     "_setup": "v1 model, 1,000 validation rows, NVIDIA T4. Accuracy column = validation log loss.",
     "rows": [
@@ -282,7 +299,8 @@
     "gqa_detail": {
       "query_heads": 12,
       "kv_heads": 2,
-      "length_cap_tokens": 515
+      "length_cap_tokens": 515,
+      "fallback_slowdown_per_layer_approx": 3
     }
   },
   "vllm": {
@@ -425,55 +443,63 @@
     }
   ],
   "notebooks": {
-    "_note": "Kaggle notebooks are private by default. Make each one public before linking it, or the link 404s for visitors.",
+    "_note": "Kaggle notebooks are private by default. Only items with public: true are linked on Kaggle. Make each one public on Kaggle before merging, or the link 404s for visitors.",
     "items": [
       {
         "title": "Training pipeline (v1)",
         "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-train",
         "owner": "Dheepak",
-        "file": "notebooks/llm-cls-train.ipynb"
+        "file": "notebooks/llm-cls-train.ipynb",
+        "public": true
       },
       {
         "title": "Training v2",
         "url": "https://www.kaggle.com/code/karuniyapremnath/llm-cls-train-v2",
         "owner": "Karuniya",
-        "file": null
+        "file": null,
+        "public": true
       },
       {
         "title": "Inference benchmark + submission",
         "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-infer",
         "owner": "Dheepak",
-        "file": "notebooks/llm-cls-infer.ipynb"
+        "file": "notebooks/llm-cls-infer.ipynb",
+        "public": true
       },
       {
         "title": "LightGBM stacker",
         "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-stack",
         "owner": "Dheepak",
-        "file": "notebooks/llm-cls-stack.ipynb"
+        "file": "notebooks/llm-cls-stack.ipynb",
+        "public": true
       },
       {
         "title": "CUDA profiling (E0-E5)",
         "url": "https://www.kaggle.com/code/dheepakkaranes/cuda-profiling",
         "owner": "Dheepak",
-        "file": "notebooks/cuda-profiling.ipynb"
+        "file": "notebooks/cuda-profiling.ipynb",
+        "public": false
       },
       {
         "title": "vLLM feasibility",
         "url": "https://www.kaggle.com/code/dheepakkaranes/vllm-feasibility",
         "owner": "Dheepak",
-        "file": "notebooks/vllm-feasibility.ipynb"
+        "file": "notebooks/vllm-feasibility.ipynb",
+        "public": false
       },
       {
         "title": "CPU / ONNX export",
         "url": "https://www.kaggle.com/code/dheepakkaranes/onnx-export",
         "owner": "Dheepak",
-        "file": "notebooks/onnx-export.ipynb"
+        "file": "notebooks/onnx-export.ipynb",
+        "public": true
       },
       {
         "title": "Weight-only quantization",
         "url": "https://www.kaggle.com/code/dheepakkaranes/onnx-weightonly",
         "owner": "Dheepak",
-        "file": "notebooks/onnx-weightonly.ipynb"
+        "file": "notebooks/onnx-weightonly.ipynb",
+        "public": true
       }
     ]
   },
