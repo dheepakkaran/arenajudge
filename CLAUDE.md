@@ -143,7 +143,9 @@ Kaggle notebooks are private until made public. Before linking each notebook, **
 
 ## README.md (repo front page)
 
-Write a clear README in plain English:
+Keep it **compact, minimal and professional, in simple English** (Dheepak's preference): results table, how it works, speed/size highlights, team, repo, run it, limitations, license. Full detail and charts live on the website, not in the README.
+
+Original outline (now condensed):
 1. Title + one-line summary + links: **Live demo**, **Website**, **Model**, **Competition**.
 2. "Results at a glance" table: leaderboard history (from `project.json`), best validation numbers, GPU 10.6×, CUDA attention fix 7.6%, CPU 4-bit 1.76 GB same accuracy, live latency 0.46 s.
 3. "How it works": model, input format, swap-TTA, stacker, data split.
