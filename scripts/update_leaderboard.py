@@ -2,8 +2,9 @@
 """Fetch the Kaggle public leaderboard and our own submissions, write data/leaderboard.json.
 
 Runs daily in GitHub Actions (.github/workflows/update-leaderboard.yml).
-Needs Kaggle credentials in the environment: KAGGLE_USERNAME + KAGGLE_KEY (from kaggle.json),
-stored as GitHub repository secrets. Never commit credentials.
+Needs Kaggle credentials in the environment, stored as GitHub repository secrets:
+either KAGGLE_API_TOKEN (new-style API token) or KAGGLE_USERNAME + KAGGLE_KEY (legacy kaggle.json).
+Never commit credentials. CLI flags checked against kaggle 2.2.4 (pinned in the workflow).
 
 The competition's leaderboard is rolling (last 2 months of submissions), so the team can drop off.
 In that case the last known rank is kept and on_leaderboard is set to false.
