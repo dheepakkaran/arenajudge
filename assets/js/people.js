@@ -11,13 +11,23 @@ const initials = (name) => name.split(/\s+/).map((w) => w[0]).join('').slice(0, 
 
 function people(p) {
   const L = p.links;
-  const role = (name) => (p.team.find((t) => t.name === name) || {}).role;
+  const member = (name) => p.team.find((t) => t.name === name) || {};
+  const a = member(p.project.author), t = member(p.project.teammate);
   return {
-    author: { name: p.project.author, role: role(p.project.author),
+    author: { name: p.project.author, role: a.role, photo: a.photo,
       links: [['LinkedIn', L.author_linkedin], ['Kaggle', L.author_kaggle], ['GitHub', L.author_github]] },
-    teammate: { name: p.project.teammate, role: role(p.project.teammate),
+    teammate: { name: p.project.teammate, role: t.role, photo: t.photo,
       links: [['LinkedIn', L.teammate_linkedin], ['Kaggle', L.teammate_kaggle]] },
   };
+}
+
+/** Photo (relative path from project.json) with the initials as a fallback if it is missing or fails. */
+function avatar(info) {
+  const fallback = () => h('span', { class: 'pc-avatar', 'aria-hidden': 'true', text: initials(info.name) });
+  if (!info.photo || /^[a-z]+:|^\//i.test(info.photo)) return fallback();   // relative paths only
+  const img = h('img', { class: 'pc-avatar pc-photo', src: info.photo, alt: '', width: 56, height: 56, decoding: 'async' });
+  img.addEventListener('error', () => img.replaceWith(fallback()), { once: true });
+  return img;
 }
 
 function upgrade(wrap, info, n) {
@@ -25,7 +35,7 @@ function upgrade(wrap, info, n) {
   const btn = h('button', { type: 'button', class: 'person-name', 'aria-expanded': 'false', 'aria-controls': id, text: info.name });
   const card = h('span', { class: 'person-card', id, role: 'group', 'aria-label': `${info.name}, profile` },
     h('span', { class: 'pc-head' },
-      h('span', { class: 'pc-avatar', 'aria-hidden': 'true', text: initials(info.name) }),
+      avatar(info),
       h('span', { class: 'pc-who' },
         h('span', { class: 'pc-name', text: info.name }),
         info.role ? h('span', { class: 'pc-role', text: info.role }) : null)),

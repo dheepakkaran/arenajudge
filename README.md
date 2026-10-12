@@ -180,6 +180,7 @@ assets/js/main.js          loads the JSON, fills in numbers, navigation, quiz, d
 assets/js/charts.js        hand-built SVG/HTML charts + their data tables
 assets/js/people.js        profile cards that open when you hover or tap a name
 assets/js/util.js          small helpers (formatting, DOM, count-up, axis ticks)
+assets/img/                profile photos used in the name cards (192 px)
 assets/favicon.svg         site icon
 assets/og-image.png        link-preview image (made by scripts/make_og_image.py)
 data/project.json          every number on the site and in this README

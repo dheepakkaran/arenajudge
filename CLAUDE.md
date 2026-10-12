@@ -47,7 +47,7 @@ The feel: **one idea per screen, big friendly type, calm colors, smooth motion, 
 - **Keyboard:** `↓`/`Enter`/`Space` = next section, `↑` = previous. Show a hint under primary buttons: `press Enter ↵`.
 - **OK ✓ buttons**: rounded, accent background, subtle lift on hover.
 - **Choice buttons with key badges** (`A`, `B`, `C`) for the interactive quiz; pressing the letter key selects.
-- Top bar: small "ArenaJudge" wordmark (text) left, "Try the live demo" button right.
+- No top bar (removed at Dheepak's request); the hero has the "Try the live demo" button.
 
 **Motion**
 - When a section enters the viewport (IntersectionObserver), its children fade in and rise 24px, staggered ~80ms.
