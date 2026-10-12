@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArenaJudge · Dheepak Karan</title>
+  <meta name="description" content="Predicting which chatbot answer humans prefer, then making it run on a free CPU in under half a second. A Kaggle + LLM-inference project by Dheepak Karan with Karuniya Premnath.">
+  <meta name="theme-color" content="#0B0D1A">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Open Graph: these URLs must be absolute for link previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ArenaJudge">
+  <meta property="og:description" content="Predicting which chatbot answer humans prefer, then making it run on a free CPU in under half a second.">
+  <meta property="og:url" content="https://dheepakkaran.github.io/arenajudge/">
+  <meta property="og:image" content="https://dheepakkaran.github.io/arenajudge/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="ArenaJudge: predicting which chatbot answer humans prefer">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    // Hide reveal-on-scroll content only when JS runs; if main.js never starts, show everything.
+    (function (d) {
+      d.classList.add('js');
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('reduce-motion');
+      setTimeout(function () { if (!window.__arenajudge) d.classList.remove('js'); }, 4000);
+    })(document.documentElement);
+  </script>
+  <script type="module" src="assets/js/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <header class="topbar">
+    <a class="wordmark" href="#intro">ArenaJudge</a>
+    <a class="btn btn-small btn-primary" href="#demo">Try the live demo</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- 0. Intro -->
+    <section id="intro" class="screen screen-hero" data-tint="0" aria-labelledby="intro-title" tabindex="-1">
+      <div class="wrap">
+        <p class="kicker reveal">A Kaggle + LLM-inference project</p>
+        <h1 id="intro-title" class="hero-title reveal">ArenaJudge</h1>
+        <p class="tagline reveal" data-bind="p.project.tagline" data-fmt="text">Predicting which chatbot answer humans prefer, then making it run on a free CPU in under half a second.</p>
+        <p class="byline reveal">by Dheepak Karan · with Karuniya Premnath · October 2026</p>
+        <ul class="chips reveal">
+          <li class="chip">
+            <span class="chip-value" data-bind="lb.rank" data-fmt="rank" data-count>—</span>
+            <span class="chip-label">Kaggle rank · <span class="nw">top <span data-bind="lb.top_percent" data-fmt="topPct">—</span></span><small>rolling leaderboard</small></span>
+          </li>
+          <li class="chip">
+            <span class="chip-value" data-bind="d.bestScore">—</span>
+            <span class="chip-label">best score<small>log loss, lower is better</small></span>
+          </li>
+          <li class="chip">
+            <span class="chip-value"><span data-bind="p.deployment.latency_after_ms" data-fmt="s2" data-count>—</span> s</span>
+            <span class="chip-label">live prediction<small>on a free CPU</small></span>
+          </li>
+          <li class="chip">
+            <span class="chip-value"><span data-bind="d.deployedSize" data-count>—</span> GB</span>
+            <span class="chip-label">model size<small>4-bit, same accuracy</small></span>
+          </li>
+        </ul>
+        <div class="actions reveal">
+          <div class="action-main">
+            <a class="btn btn-primary btn-big" href="#quiz">Start <span aria-hidden="true">✓</span></a>
+            <span class="hint" aria-hidden="true">press <kbd>Enter ↵</kbd></span>
+          </div>
+          <a class="btn btn-ghost btn-big" href="#demo">Try the live demo</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Quiz -->
+    <section id="quiz" class="screen" data-tint="1" aria-labelledby="quiz-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">1 <span>→</span></p>
+        <h2 id="quiz-title" class="reveal">Which answer would a human pick?</h2>
+        <div class="quiz reveal">
+          <div class="qa-prompt">
+            <span class="qa-tag">Prompt</span>
+            <p id="quiz-prompt">—</p>
+          </div>
+          <div class="qa-pair">
+            <article class="qa-card" aria-label="Response A">
+              <span class="qa-tag">Response A</span>
+              <p id="quiz-a">—</p>
+            </article>
+            <article class="qa-card" aria-label="Response B">
+              <span class="qa-tag">Response B</span>
+              <p id="quiz-b">—</p>
+            </article>
+          </div>
+          <div class="choices" role="group" aria-label="Your pick (keys A, B, C)">
+            <button type="button" class="choice" data-choice="A" aria-pressed="false" disabled><kbd class="key">A</kbd> A is better</button>
+            <button type="button" class="choice" data-choice="B" aria-pressed="false" disabled><kbd class="key">B</kbd> B is better</button>
+            <button type="button" class="choice" data-choice="Tie" aria-pressed="false" disabled><kbd class="key">C</kbd> Tie</button>
+          </div>
+          <p class="fallback" id="quiz-fallback" hidden>The example couldn't load, so the quiz is turned off.</p>
+          <p class="sr-only" id="quiz-live" aria-live="polite"></p>
+          <div class="quiz-result" id="quiz-result" hidden>
+            <p class="result-head" id="quiz-head"></p>
+            <p class="muted small">The model's real output for this example:</p>
+            <div id="quiz-bars"></div>
+            <p class="result-line">That's what ArenaJudge does: <b>it predicts the human vote.</b></p>
+            <div class="action-main">
+              <a class="btn btn-primary" id="quiz-next" href="#competition">Next <span aria-hidden="true">✓</span></a>
+              <span class="hint" aria-hidden="true">press <kbd>Enter ↵</kbd></span>
+            </div>
+          </div>
+          <p class="fine">Example written for this demo; probabilities are real outputs from the live model.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. The competition -->
+    <section id="competition" class="screen" data-tint="2" aria-labelledby="competition-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">2 <span>→</span></p>
+        <h2 id="competition-title" class="reveal">The competition</h2>
+        <ul class="lines">
+          <li class="reveal"><b>Chatbot Arena</b>: people ask a question, two anonymous chatbots answer, and the person votes.</li>
+          <li class="reveal">Kaggle's <b>LLM Classification Finetuning</b> competition shares <b data-bind="p.competition.data_rows">—</b> of these votes. The task: given the question and both answers, <b>predict the vote</b>.</li>
+        </ul>
+        <ul class="pills reveal" aria-label="The three possible votes">
+          <li><span class="pill-key" aria-hidden="true">A</span> A wins</li>
+          <li><span class="pill-key" aria-hidden="true">B</span> B wins</li>
+          <li><span class="pill-key" aria-hidden="true">=</span> Tie</li>
+        </ul>
+        <ul class="lines">
+          <li class="reveal">The model gives a probability for each. Score = <b>log loss</b>, lower is better. Guessing 1/3 for everything scores <b data-bind="p.competition.uniform_baseline">—</b>: the line to beat.</li>
+          <li class="reveal">About <b><span data-bind="p.competition.teams_approx" data-fmt="approxInt">—</span> teams</b>. The leaderboard is <b>rolling</b>: only submissions from the last 2 months count.</li>
+        </ul>
+        <p class="aside reveal"><b>Why this one?</b> I want to work in LLM inference: making models fast, small and cheap to serve. This project needed speed and memory, not just accuracy, and a public leaderboard proves the model actually works.</p>
+      </div>
+    </section>
+
+    <!-- 3. The journey -->
+    <section id="journey" class="screen" data-tint="3" aria-labelledby="journey-title" tabindex="-1">
+      <div class="wrap wrap-wide">
+        <p class="step-label reveal" aria-hidden="true">3 <span>→</span></p>
+        <h2 id="journey-title" class="reveal">The journey</h2>
+        <ol class="timeline">
+          <li class="tl-item reveal-self" style="--c:1">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <p class="tl-date"><time data-bind="p.leaderboard_history.0.date" data-fmt="date">—</time></p>
+            <h3 class="tl-title">Day 1: the start</h3>
+            <p>Guessing 1/3 scores <b data-bind="p.leaderboard_history.0.score">—</b>. That's the line to beat.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:2">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <p class="tl-date"><time data-bind="p.leaderboard_history.1.date" data-fmt="date">—</time></p>
+            <h3 class="tl-title">v1 + swap-TTA</h3>
+            <p>Qwen2.5-1.5B + LoRA on <b data-bind="p.training_runs.0.rows">—</b> rows. First score <b data-bind="p.leaderboard_history.1.score">—</b>, rank <b data-bind="p.leaderboard_history.1.rank" data-fmt="rank">—</b>.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:3">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <p class="tl-date"><time data-bind="p.leaderboard_history.2.date" data-fmt="date">—</time></p>
+            <h3 class="tl-title">The stacker</h3>
+            <p>LightGBM adds length and style: <b data-bind="p.leaderboard_history.2.score">—</b>, rank ~<b data-bind="p.leaderboard_history.2.rank" data-fmt="rank">—</b>.</p>
+          </li>
+          <li class="tl-item reveal-self is-team" style="--c:4">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <h3 class="tl-title">The zero-init bug</h3>
+            <p>Karuniya's first v2 run never learned: the output layer started at exactly zero.</p>
+          </li>
+          <li class="tl-item reveal-self is-team" style="--c:5">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <p class="tl-date"><time data-bind="p.leaderboard_history.3.date" data-fmt="date">—</time></p>
+            <h3 class="tl-title">Karuniya's v2: best score</h3>
+            <p><b data-bind="p.training_runs.1.rows">—</b> rows, fixed init: <b data-bind="p.leaderboard_history.3.score">—</b>.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:6">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <h3 class="tl-title">CUDA profiling</h3>
+            <p>Found attention running on a silent slow path, and fixed it.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:7">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <h3 class="tl-title">vLLM</h3>
+            <p>Served the classifier at <b data-bind="p.vllm.classifier_pooling_runner.samples_per_s" data-fmt="f1">—</b> samples/s on a T4.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:8">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <h3 class="tl-title">ONNX + 4-bit</h3>
+            <p><b><span data-bind="d.deployedSize">—</span> GB</b> on CPU, same accuracy as fp32.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:9">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <h3 class="tl-title">Live Space</h3>
+            <p><b><span data-bind="p.deployment.latency_after_ms" data-fmt="s2">—</span> s</b> per prediction on a free CPU.</p>
+          </li>
+          <li class="tl-item reveal-self" style="--c:10">
+            <span class="tl-dot" aria-hidden="true"></span>
+            <p class="tl-date"><time data-bind="p.leaderboard_history.4.date" data-fmt="date">—</time></p>
+            <h3 class="tl-title">Today</h3>
+            <p>Same submission, now <b data-bind="p.leaderboard_history.4.rank" data-fmt="rank">—</b> as other teams keep submitting.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 4. Leaderboard (live) -->
+    <section id="leaderboard" class="screen" data-tint="4" aria-labelledby="leaderboard-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">4 <span>→</span></p>
+        <h2 id="leaderboard-title" class="reveal">Leaderboard <span class="live-badge"><span class="live-dot" aria-hidden="true"></span>live</span></h2>
+        <div class="lb-hero reveal" id="lb-hero">
+          <p class="lb-rank-line">
+            <span class="lb-prefix" id="lb-prefix" hidden>Last ranked </span>
+            <span class="lb-rank" data-bind="lb.rank" data-fmt="rank" data-count>—</span>
+            <span class="lb-of">of <span data-bind="lb.teams" data-fmt="teams">—</span> teams</span>
+          </p>
+          <p class="lb-meta">top <b data-bind="lb.top_percent" data-fmt="topPct">—</b> · score <b data-bind="lb.score">—</b> <span class="muted">(log loss)</span></p>
+          <p class="lb-note">Rolling leaderboard: the rank changes as other teams submit. The score is what we control.</p>
+          <p class="lb-off" id="lb-off" hidden>Not on the rolling leaderboard right now: older submissions drop off after 2 months.</p>
+          <p class="lb-updated" id="lb-updated">—</p>
+        </div>
+        <figure class="card reveal" id="score-fig">
+          <figcaption class="fig-head"><span class="fig-title">Public score by stage</span> <span class="fig-note">lower is better ↓</span></figcaption>
+          <div class="chart" id="score-chart" data-chart></div>
+        </figure>
+        <div class="lb-small">
+          <figure class="card reveal" id="rank-fig" hidden>
+            <figcaption class="fig-head"><span class="fig-title">Rank over time</span> <span class="fig-note">from the daily snapshots</span></figcaption>
+            <div class="chart" id="rank-chart"></div>
+          </figure>
+          <figure class="card reveal" id="hist-fig" hidden>
+            <figcaption class="fig-head"><span class="fig-title">All teams' scores</span> <span class="fig-note">worst-scoring ~5% left out for readability</span></figcaption>
+            <div class="chart" id="hist-chart"></div>
+          </figure>
+        </div>
+        <p class="reveal"><a class="link-out" href="https://www.kaggle.com/competitions/llm-classification-finetuning/leaderboard" data-href="p.links.competition_leaderboard" target="_blank" rel="noopener">See the leaderboard on Kaggle ↗</a></p>
+      </div>
+    </section>
+
+    <!-- 5. The team -->
+    <section id="team" class="screen" data-tint="1" aria-labelledby="team-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">5 <span>→</span></p>
+        <h2 id="team-title" class="reveal">The team: who did what</h2>
+        <div class="team reveal" id="team-cards" data-chart></div>
+        <div class="zero-init reveal">
+          <h3>The zero-init bug, solved together</h3>
+          <ol class="mini-steps">
+            <li><b>Her run exposed it.</b> Karuniya's first v2 run, about <span data-bind="d.v2FailedHours">—</span> hours on her own GPU quota, never learned: the loss stayed flat.</li>
+            <li><b>He diagnosed it.</b> Dheepak traced it in her training logs: the output layer started at exactly zero, so no learning signal reached the LoRA weights.</li>
+            <li><b>Her rerun fixed it.</b> With the layer started at tiny random values (<code>std=1e-3</code>), her <span data-bind="d.v2Minutes" data-fmt="h1">—</span>-hour rerun reached validation <b data-bind="d.v2val">—</b>, and her model powers the team's best score, <b data-bind="d.bestScore">—</b>.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. GPU -->
+    <section id="gpu" class="screen" data-tint="2" aria-labelledby="gpu-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">6 <span>→</span></p>
+        <h2 id="gpu-title" class="reveal">Making it fast on a GPU</h2>
+        <p class="lead reveal">Same model, same data, <span data-bind="d.gpuCount">—</span> ways to run it.</p>
+        <div class="toggle reveal" id="gpu-toggle" role="group" aria-label="Metric to show">
+          <button type="button" data-metric="speed" aria-pressed="true" disabled>Speed <small>samples/s</small></button>
+          <button type="button" data-metric="memory" aria-pressed="false" disabled>Memory <small>GB</small></button>
+          <button type="button" data-metric="accuracy" aria-pressed="false" disabled>Accuracy <small>log loss</small></button>
+        </div>
+        <figure class="card reveal" id="gpu-fig">
+          <figcaption class="fig-head">
+            <span class="fig-note" id="gpu-note" aria-live="polite"></span>
+            <ul class="legend" aria-label="Legend">
+              <li><span class="sw sw-best" aria-hidden="true"></span>best for this metric</li>
+              <li><span class="sw sw-naive" aria-hidden="true"></span>naive starting point</li>
+              <li><span class="sw sw-other" aria-hidden="true"></span>other setups</li>
+            </ul>
+          </figcaption>
+          <div class="chart" id="gpu-chart" data-chart></div>
+          <p class="fine" data-bind="p.gpu_benchmark._setup" data-fmt="text"></p>
+        </figure>
+        <ul class="takeaways reveal">
+          <li><b>fp16</b> alone: <b data-bind="d.fp16Speedup" data-fmt="x">—</b> faster, half the memory, same accuracy.</li>
+          <li><b>Bigger batches alone didn't help.</b> One sample already kept the GPU busy: the work was compute-bound. <b>Sorting by length</b> to cut padding did: <b data-bind="d.sortedSpeedup" data-fmt="x">—</b>.</li>
+          <li><b>4-bit</b> cut memory <b data-bind="d.nf4MemShrink" data-fmt="x1">—</b> with almost no accuracy loss, but <b>wasn't faster</b>: the bottleneck was compute, not memory.</li>
+          <li><b>Two GPUs</b>, data split between them: <b data-bind="d.bestSpeedup" data-fmt="x">—</b> faster than naive.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. CUDA profiling -->
+    <section id="cuda" class="screen" data-tint="3" aria-labelledby="cuda-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">7 <span>→</span></p>
+        <h2 id="cuda-title" class="reveal">Inside the GPU</h2>
+        <p class="lead reveal">I profiled the model with <code>torch.profiler</code> and CUDA events to see where the time goes.</p>
+        <figure class="card reveal">
+          <figcaption class="fig-head"><span class="fig-title">Share of GPU kernel time</span></figcaption>
+          <div class="chart chart-html" id="kernel-chart" data-chart></div>
+        </figure>
+
+        <h3 class="sub reveal">The bug hunt</h3>
+        <ol class="hunt reveal">
+          <li>
+            <span class="hunt-tag">Symptom</span>
+            <p>Some batches were about <b data-bind="p.cuda_profiling.gqa_detail.fallback_slowdown_per_layer_approx" data-fmt="x">—</b> slower per layer.</p>
+          </li>
+          <li>
+            <span class="hunt-tag">Cause</span>
+            <p>Qwen2.5 uses grouped-query attention: <b data-bind="p.cuda_profiling.gqa_detail.query_heads">—</b> query heads share <b data-bind="p.cuda_profiling.gqa_detail.kv_heads">—</b> key/value heads. When every sample hit the <b data-bind="p.cuda_profiling.gqa_detail.length_cap_tokens">—</b>-token cap there was no padding, a different code path skipped expanding the key/value heads, and PyTorch <b>silently fell back</b> to a slow unfused kernel.</p>
+          </li>
+          <li>
+            <span class="hunt-tag hunt-tag-fix">Fix</span>
+            <p>Pad every batch to a multiple of 8 tokens. <b data-bind="p.cuda_profiling.experiments.5.result" data-fmt="cap">—</b>.</p>
+          </li>
+        </ol>
+
+        <h3 class="sub reveal">CUDA Graphs</h3>
+        <p class="reveal">Record the GPU work once, then replay it: no per-kernel launch cost. It helps most on short inputs.</p>
+        <div class="card reveal">
+          <div class="chart chart-html" id="graphs-chart" data-chart></div>
+          <p class="fine">Speedup at batch 1. The thin line marks 1×, no change.</p>
+        </div>
+
+        <h3 class="sub reveal">Tried, didn't help, and why</h3>
+        <ul class="tried reveal" id="tried-list"></ul>
+      </div>
+    </section>
+
+    <!-- 8. vLLM -->
+    <section id="vllm" class="screen" data-tint="4" aria-labelledby="vllm-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">8 <span>→</span></p>
+        <h2 id="vllm-title" class="reveal">Serving with vLLM</h2>
+        <ul class="lines">
+          <li class="reveal">Got <b>vLLM <span data-bind="p.vllm.version" data-fmt="text">—</span></b> running on Kaggle's older T4 GPUs. FlashAttention 2 isn't supported there, so it uses Triton attention.</li>
+          <li class="reveal">Served our classifier through vLLM's <b>pooling runner</b>, with matching predictions: max probability difference <b data-bind="p.vllm.classifier_pooling_runner.max_prob_diff_vs_hf">—</b> vs Hugging Face.</li>
+        </ul>
+        <div class="card reveal">
+          <div class="chart chart-html" id="vllm-chart" data-chart></div>
+          <p class="fine">Samples per second. Higher is better.</p>
+        </div>
+        <ul class="lines">
+          <li class="reveal">Also served a 7B model (AWQ 4-bit) on one GPU, and split across two GPUs with tensor parallelism.</li>
+          <li class="reveal"><b data-bind="p.vllm.all_tests_passed" data-fmt="text">—</b> feasibility tests passed.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 9. CPU -->
+    <section id="cpu" class="screen" data-tint="2" aria-labelledby="cpu-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">9 <span>→</span></p>
+        <h2 id="cpu-title" class="reveal">Shrinking it for a free CPU</h2>
+        <p class="lead reveal">A free live demo can't use a GPU, so the model had to run on a plain CPU. I tried <span data-bind="d.cpuCount">—</span> engines.</p>
+        <figure class="card reveal" id="cpu-fig">
+          <figcaption class="fig-head">
+            <ul class="legend" aria-label="Legend">
+              <li><span class="sw sw-dot sw-good" aria-hidden="true"></span>accuracy OK</li>
+              <li><span class="sw-x" aria-hidden="true"></span>accuracy broken</li>
+              <li><span class="sw sw-dot sw-cool" aria-hidden="true"></span>deployed (4-bit)</li>
+              <li><span class="sw sw-band" aria-hidden="true"></span>acceptable band</li>
+            </ul>
+          </figcaption>
+          <div class="chart" id="cpu-chart" data-chart></div>
+          <p class="fine" data-bind="p.cpu_engines._setup" data-fmt="text"></p>
+        </figure>
+        <p class="lesson reveal"><b>Lesson: quantize the weights, not the activations.</b> Plain INT8 also squeezes the activations (the numbers flowing between layers), and LLM activations have big outliers. Weight-only 4-bit keeps them at full precision: same accuracy as fp32, <b data-bind="d.cpuShrink" data-fmt="x1">—</b> smaller.</p>
+        <p class="fine reveal">ONNX Runtime on its own was <b data-bind="d.onnxVsTorch" data-fmt="x1">—</b> faster than PyTorch on CPU, with the same log loss.</p>
+      </div>
+    </section>
+
+    <!-- 10. Going live -->
+    <section id="live" class="screen" data-tint="3" aria-labelledby="live-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">10 <span>→</span></p>
+        <h2 id="live-title" class="reveal">Going live</h2>
+        <div class="card reveal">
+          <p class="fig-head"><span class="fig-title">One short prediction on the free Space</span></p>
+          <div class="chart chart-html" id="latency-chart" data-chart></div>
+          <p class="big-x"><b data-bind="d.liveSpeedup" data-fmt="text">—</b> faster <span class="fine">(<span data-bind="d.liveSpeedupNote" data-fmt="text">—</span>)</span></p>
+        </div>
+        <ol class="mini-steps reveal">
+          <li>The first request took <b><span data-bind="p.deployment.latency_before_ms" data-fmt="s1">—</span> s</b>. The app asked how many CPUs it had and got <b data-bind="d.hostCpus">—</b>: the whole server's count, not the container's.</li>
+          <li>The container may only use a few of them, so <span data-bind="d.hostCpus">—</span> threads fought over a handful of cores.</li>
+          <li><b>Fix:</b> <span data-bind="p.deployment.fix" data-fmt="text">—</span>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 11. Try it live -->
+    <section id="demo" class="screen" data-tint="0" aria-labelledby="demo-title" tabindex="-1">
+      <div class="wrap wrap-demo">
+        <p class="step-label reveal" aria-hidden="true">11 <span>→</span></p>
+        <h2 id="demo-title" class="reveal">Try it live</h2>
+        <p class="lead reveal">Paste a prompt and two answers, and the model predicts the human vote. First load can take 1–3 minutes if the demo was asleep. After that, predictions take about half a second.</p>
+        <div class="app-window reveal">
+          <div class="app-bar">
+            <span class="app-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="app-title">ArenaJudge · live on Hugging Face</span>
+          </div>
+          <div class="app-body">
+            <iframe id="demo-frame"
+              src="https://dheepakkaran-arenajudge.hf.space/?__theme=dark"
+              data-app="https://huggingface.co/spaces/dheepakkaran/arenajudge"
+              title="ArenaJudge live demo, hosted on Hugging Face Spaces"
+              loading="lazy" allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"
+              onload="this.dataset.loaded = '1'"></iframe>
+            <div class="app-overlay" id="demo-overlay" role="status" hidden>
+              <p>Loading the live demo…</p>
+            </div>
+            <noscript><div class="app-overlay"><p>The demo window needs JavaScript in some browsers. Use the links below to open the full app.</p></div></noscript>
+          </div>
+        </div>
+        <p class="demo-links reveal">
+          <a class="btn btn-primary" href="https://huggingface.co/spaces/dheepakkaran/arenajudge" data-href="p.links.live_demo_space" target="_blank" rel="noopener">Open the full app ↗</a>
+          <a class="btn" href="https://huggingface.co/dheepakkaran/arenajudge-qwen2.5-1.5b-lora-onnx-w4" data-href="p.links.hf_model" target="_blank" rel="noopener">Model on Hugging Face ↗</a>
+        </p>
+        <p class="fine reveal">Window blank? Some browsers block embedded apps. The “Open the full app” button always works.</p>
+      </div>
+    </section>
+
+    <!-- 12. What I learned + limitations -->
+    <section id="learned" class="screen" data-tint="1" aria-labelledby="learned-title" tabindex="-1">
+      <div class="wrap wrap-wide-ish">
+        <p class="step-label reveal" aria-hidden="true">12 <span>→</span></p>
+        <h2 id="learned-title" class="reveal">What I learned, and honest limitations</h2>
+        <div class="cols">
+          <div class="col reveal">
+            <h3>What I learned</h3>
+            <ul>
+              <li><b>Measure first.</b> Most “obvious” speedups (bigger batches, pinned memory, <code>torch.compile</code>) did nothing here. The profiler showed why.</li>
+              <li><b>Silent slow paths are real.</b> A missing bit of padding sent attention to a kernel about <span data-bind="p.cuda_profiling.gqa_detail.fallback_slowdown_per_layer_approx" data-fmt="x">—</span> slower, with no warning.</li>
+              <li><b>Quantize weights, not activations</b>, for LLMs on CPU.</li>
+              <li><b>Containers lie about CPUs.</b> <code>os.cpu_count()</code> sees the host, not your quota.</li>
+              <li><b>Rank isn't fully in your control; score is.</b></li>
+            </ul>
+          </div>
+          <div class="col reveal">
+            <h3>Honest limitations</h3>
+            <ul>
+              <li>It predicts <b>what humans prefer</b>, not what's correct. Humans also like longer answers.</li>
+              <li>It only sees the first <span data-bind="p.model.max_response_tokens">—</span> tokens of each answer.</li>
+              <li>Top teams use much larger models and ensembles; this is a 1.5B model built on free GPUs.</li>
+              <li>CPU numbers come from a small <span data-bind="d.cpuRows">—</span>-row check; live latency depends on input length and the Space's hardware.</li>
+              <li>The free Space sleeps when idle; the first visitor after a while waits about 1–3 minutes.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="next reveal"><b>Next:</b> a v2b model that reads longer answers (<span data-bind="p.next_steps.0.max_response_tokens">—</span> tokens) plus each answer's word count, and a resubmit before the 2-month rolling window drops the best version.</p>
+      </div>
+    </section>
+
+    <!-- 13. The end -->
+    <section id="end" class="screen" data-tint="0" aria-labelledby="end-title" tabindex="-1">
+      <div class="wrap">
+        <p class="step-label reveal" aria-hidden="true">13 <span>→</span></p>
+        <h2 id="end-title" class="reveal">Thanks for reading.</h2>
+        <div class="end-links reveal">
+          <a class="btn btn-primary" href="https://github.com/dheepakkaran/arenajudge" data-href="p.links.github_repo" target="_blank" rel="noopener">GitHub repo ↗</a>
+          <a class="btn" href="https://huggingface.co/spaces/dheepakkaran/arenajudge" data-href="p.links.live_demo_space" target="_blank" rel="noopener">Live demo ↗</a>
+          <a class="btn" href="https://huggingface.co/dheepakkaran/arenajudge-qwen2.5-1.5b-lora-onnx-w4" data-href="p.links.hf_model" target="_blank" rel="noopener">Model ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/dheepakkaran" data-href="p.links.author_linkedin" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://www.kaggle.com/dheepakkaranes" data-href="p.links.author_kaggle" target="_blank" rel="noopener">Kaggle profile ↗</a>
+        </div>
+        <h3 class="sub reveal">Kaggle notebooks</h3>
+        <ul class="nb-list reveal" id="nb-list"></ul>
+        <h3 class="sub reveal">Skills</h3>
+        <ul class="skills reveal" id="skills"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Built by Dheepak Karan · Numbers from <a href="data/project.json">data/project.json</a> · Leaderboard auto-updated daily</p>
+  </footer>
+
+  <nav class="arrows" aria-label="Section navigation">
+    <button type="button" id="prev" aria-label="Previous section">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" id="next" aria-label="Next section">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </nav>
+
+  <div class="data-error" id="data-error" role="alert" hidden></div>
+</body>
+</html>
