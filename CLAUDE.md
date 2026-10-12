@@ -35,9 +35,9 @@ The feel: **one idea per screen, big friendly type, calm colors, smooth motion, 
 - Font: **Inter** from Google Fonts (`display=swap`) with a full system fallback stack.
 - Use `scroll-snap-type: y proximity` (not mandatory, so tall sections never trap the user).
 
-**Color (dark theme)**
-- Background deep navy (`#0B0D1A`), surface `#141830`, text `#EEF0FF`, muted `#9AA0C3`.
-- One warm accent (`#FF7A45`) for numbers, buttons, highlights; a cool secondary (`#7C8CFF`) for chart series 2; green `#3DDC97` = good/ok, red `#FF5C7A` = broken.
+**Color (black-and-white theme)**
+- Background black (`#000000`), surface `#111111`, text `#FFFFFF`, muted `#A3A3A3`.
+- White is the accent for numbers, buttons, highlights. Charts use gray steps `#FFFFFF`, `#BDBDBD`, `#808080`, `#646464` (never `#808080` next to `#646464`); "good / broken" is shown with shapes and labels (e.g. circle vs ✕), not color.
 - Each section may shift the background tint slightly; animate the change (`transition: background-color .6s`).
 - Define all colors as CSS custom properties on `:root`.
 
