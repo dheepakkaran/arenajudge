@@ -1,0 +1,41 @@
+{
+  "_note": "Written by scripts/update_leaderboard.py (GitHub Actions, daily). This first version is a manual snapshot.",
+  "source": "manual",
+  "competition": "llm-classification-finetuning",
+  "team": "Dk",
+  "updated_at": "2026-10-12T01:20:00Z",
+  "on_leaderboard": true,
+  "rank": 51,
+  "teams": 240,
+  "teams_approx": true,
+  "score": 1.00281,
+  "top_percent": 21.3,
+  "leader_score": null,
+  "neighbors": [],
+  "histogram": null,
+  "submissions": [],
+  "history": [
+    {
+      "date": "2026-10-07",
+      "rank": 53,
+      "score": 1.01558,
+      "teams": 240,
+      "source": "manual"
+    },
+    {
+      "date": "2026-10-10",
+      "rank": 48,
+      "score": 1.00281,
+      "teams": 240,
+      "source": "manual",
+      "approx": true
+    },
+    {
+      "date": "2026-10-11",
+      "rank": 51,
+      "score": 1.00281,
+      "teams": 240,
+      "source": "manual"
+    }
+  ]
+}
