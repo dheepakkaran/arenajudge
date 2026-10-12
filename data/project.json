@@ -1,0 +1,502 @@
+{
+  "_note": "Single source of truth for every number on the site and in the README. Do not invent numbers that are not here.",
+  "project": {
+    "name": "ArenaJudge",
+    "tagline": "Predicting which chatbot answer humans prefer, then making it run on a free CPU in under half a second.",
+    "author": "Dheepak Karan",
+    "teammate": "Karuniya Premnath",
+    "kaggle_team_name": "Dk",
+    "dates": "October 6-11, 2026"
+  },
+  "links": {
+    "live_demo_space": "https://huggingface.co/spaces/dheepakkaran/arenajudge",
+    "live_demo_embed": "https://dheepakkaran-arenajudge.hf.space",
+    "hf_model": "https://huggingface.co/dheepakkaran/arenajudge-qwen2.5-1.5b-lora-onnx-w4",
+    "github_repo": "https://github.com/dheepakkaran/arenajudge",
+    "site": "https://dheepakkaran.github.io/arenajudge/",
+    "competition": "https://www.kaggle.com/competitions/llm-classification-finetuning",
+    "competition_leaderboard": "https://www.kaggle.com/competitions/llm-classification-finetuning/leaderboard",
+    "author_github": "https://github.com/dheepakkaran",
+    "author_linkedin": "https://www.linkedin.com/in/dheepakkaran",
+    "author_kaggle": "https://www.kaggle.com/dheepakkaranes",
+    "teammate_kaggle": "https://www.kaggle.com/karuniyapremnath",
+    "teammate_linkedin": "TODO: ask Karuniya for her LinkedIn URL (leave out the link if not provided)"
+  },
+  "competition": {
+    "name": "LLM Classification Finetuning",
+    "host": "Kaggle (Getting Started competition)",
+    "slug": "llm-classification-finetuning",
+    "data_rows": 57477,
+    "task": "Given a prompt and two chatbot responses from Chatbot Arena, predict the human vote: A wins, B wins, or tie.",
+    "metric": "log loss (lower is better)",
+    "uniform_baseline": 1.0986,
+    "teams_approx": 240,
+    "leaderboard_type": "rolling: only submissions from the last 2 months count"
+  },
+  "model": {
+    "base": "Qwen2.5-1.5B-Instruct",
+    "method": "LoRA fine-tuning, 3-class sequence-classification head",
+    "input_format": "Prompt: {prompt} / Response A: {a} / Response B: {b} / Which response is better?",
+    "max_prompt_tokens": 96,
+    "max_response_tokens": 200,
+    "precision_training": "fp16 on NVIDIA T4",
+    "learning_rates": {
+      "lora": 0.0001,
+      "head": 5e-05
+    },
+    "head_init_fix": "normal(mean=0, std=1e-3) instead of zeros"
+  },
+  "data_split": [
+    {
+      "rows": "0-1,999",
+      "use": "validation for every model"
+    },
+    {
+      "rows": "2,000-11,999",
+      "use": "never trained on; stacker training rows"
+    },
+    {
+      "rows": "12,000-31,999",
+      "use": "v1 training (20,000 rows)"
+    },
+    {
+      "rows": "12,000-41,999",
+      "use": "v2 training (30,000 rows)"
+    }
+  ],
+  "leaderboard_history": [
+    {
+      "date": "2026-10-06",
+      "stage": "Uniform baseline (1/3 each)",
+      "score": 1.0986,
+      "rank": null,
+      "owner": null
+    },
+    {
+      "date": "2026-10-07",
+      "stage": "v1: Qwen2.5-1.5B LoRA (20k rows) + swap-TTA",
+      "score": 1.01558,
+      "rank": 53,
+      "rank_approx": false,
+      "owner": "Dheepak"
+    },
+    {
+      "date": "2026-10-07",
+      "stage": "v1 + LightGBM length/style stacker",
+      "score": 1.0119,
+      "rank": 48,
+      "rank_approx": true,
+      "owner": "Dheepak"
+    },
+    {
+      "date": "2026-10-10",
+      "stage": "v2: 30k rows + small-random head init (+ TTA + stacker)",
+      "score": 1.00281,
+      "rank": 48,
+      "rank_approx": true,
+      "owner": "Karuniya (model) + Dheepak (pipeline)"
+    },
+    {
+      "date": "2026-10-11",
+      "stage": "Same submission, rank as of today (other teams kept submitting)",
+      "score": 1.00281,
+      "rank": 51,
+      "rank_approx": false,
+      "owner": null
+    }
+  ],
+  "validation": [
+    {
+      "model": "v1, no TTA",
+      "val_log_loss": 1.0167
+    },
+    {
+      "model": "v1 + swap-TTA",
+      "val_log_loss": 1.0075
+    },
+    {
+      "model": "v1 + TTA + stacker",
+      "val_log_loss": 1.0022
+    },
+    {
+      "model": "v2, no TTA",
+      "val_log_loss": 0.9872
+    },
+    {
+      "model": "v2 + swap-TTA",
+      "val_log_loss": 0.9847
+    },
+    {
+      "model": "v2 + TTA + stacker",
+      "val_log_loss": 0.9793
+    }
+  ],
+  "training_runs": [
+    {
+      "model": "v1",
+      "rows": 20000,
+      "minutes": 145,
+      "gpu": "1x T4",
+      "owner": "Dheepak"
+    },
+    {
+      "model": "v2",
+      "rows": 30000,
+      "minutes": 210,
+      "gpu": "1x T4",
+      "owner": "Karuniya"
+    }
+  ],
+  "gpu_benchmark": {
+    "_setup": "v1 model, 1,000 validation rows, NVIDIA T4. Accuracy column = validation log loss.",
+    "rows": [
+      {
+        "variant": "fp32, batch 1 (naive)",
+        "seconds": 422.8,
+        "samples_per_s": 2.4,
+        "vram_gb": 6.25,
+        "log_loss": 1.0373,
+        "speedup": 1.0
+      },
+      {
+        "variant": "fp16, batch 1",
+        "seconds": 106.8,
+        "samples_per_s": 9.4,
+        "vram_gb": 3.15,
+        "log_loss": 1.0373,
+        "speedup": 4.0
+      },
+      {
+        "variant": "fp16, batch 16",
+        "seconds": 105.8,
+        "samples_per_s": 9.5,
+        "vram_gb": 3.65,
+        "log_loss": 1.0373,
+        "speedup": 4.0
+      },
+      {
+        "variant": "fp16, batch 16, length-sorted",
+        "seconds": 77.2,
+        "samples_per_s": 13.0,
+        "vram_gb": 3.89,
+        "log_loss": 1.0373,
+        "speedup": 5.5
+      },
+      {
+        "variant": "fp16, batch 32, length-sorted",
+        "seconds": 78.6,
+        "samples_per_s": 12.7,
+        "vram_gb": 4.67,
+        "log_loss": 1.0373,
+        "speedup": 5.4
+      },
+      {
+        "variant": "INT8 (bitsandbytes)",
+        "seconds": 92.5,
+        "samples_per_s": 10.8,
+        "vram_gb": 2.59,
+        "log_loss": 1.0384,
+        "speedup": 4.6
+      },
+      {
+        "variant": "4-bit NF4 (bitsandbytes)",
+        "seconds": 78.8,
+        "samples_per_s": 12.7,
+        "vram_gb": 1.12,
+        "log_loss": 1.0375,
+        "speedup": 5.4
+      },
+      {
+        "variant": "swap-TTA (2 passes)",
+        "seconds": 155.6,
+        "samples_per_s": 6.4,
+        "vram_gb": 3.89,
+        "log_loss": 1.0236,
+        "speedup": 2.7
+      },
+      {
+        "variant": "2x T4 data parallel",
+        "seconds": 40.0,
+        "samples_per_s": 25.0,
+        "vram_gb": 3.9,
+        "log_loss": 1.0373,
+        "speedup": 10.6
+      }
+    ]
+  },
+  "cuda_profiling": {
+    "experiments": [
+      {
+        "id": "E0",
+        "name": "Baseline timing",
+        "finding": "GPU 99.8% busy, CPU prep 0.2%: compute-bound",
+        "result": "16.0 samples/s"
+      },
+      {
+        "id": "E1",
+        "name": "torch.profiler kernel breakdown",
+        "finding": "matmul 60.8%, element-wise 25.3%, attention 13.9% (8.2% on a slow fallback path)",
+        "result": "found the attention fallback"
+      },
+      {
+        "id": "E2",
+        "name": "Pinned memory + CUDA stream",
+        "finding": "CPU was never the bottleneck",
+        "result": "0.83-0.93x (no gain)"
+      },
+      {
+        "id": "E3",
+        "name": "torch.compile",
+        "finding": "fusion only touches the 25% element-wise part",
+        "result": "0.94-1.04x (no reliable gain)"
+      },
+      {
+        "id": "E4",
+        "name": "CUDA Graphs, batch 1",
+        "finding": "removes per-kernel launch overhead; matters most for short inputs",
+        "result": "2.29x at 32 tokens, 1.27x at 512 tokens"
+      },
+      {
+        "id": "E5",
+        "name": "Attention fallback fix",
+        "finding": "GQA + zero-padding batches skipped K/V head expansion; PyTorch fell back to unfused attention. Fix: pad batches to a multiple of 8",
+        "result": "23-24% faster on affected batches, 7.6% overall"
+      }
+    ],
+    "kernel_breakdown_pct": {
+      "matmul": 60.8,
+      "elementwise": 25.3,
+      "attention_total": 13.9,
+      "attention_fallback_part": 8.2
+    },
+    "cuda_graphs_speedup": [
+      {
+        "tokens": 32,
+        "speedup": 2.29
+      },
+      {
+        "tokens": 512,
+        "speedup": 1.27
+      }
+    ],
+    "gqa_detail": {
+      "query_heads": 12,
+      "kv_heads": 2,
+      "length_cap_tokens": 515
+    }
+  },
+  "vllm": {
+    "version": "0.31.0",
+    "gpu": "NVIDIA T4 (compute capability 7.5)",
+    "attention_backend": "TRITON_ATTN (FlashAttention 2 not supported on T4)",
+    "classifier_pooling_runner": {
+      "samples_per_s": 14.6,
+      "hf_best_single_gpu_samples_per_s": 13.0,
+      "log_loss": 1.0064,
+      "max_prob_diff_vs_hf": 0.00111
+    },
+    "also_served": "7B AWQ model on 1 GPU and with tensor parallel across 2 GPUs",
+    "all_tests_passed": "6 of 6"
+  },
+  "cpu_engines": {
+    "_setup": "80 validation rows, batch 1, ~350-token inputs, Kaggle CPU. p50 = median time per prediction.",
+    "rows": [
+      {
+        "engine": "PyTorch fp32 (reference)",
+        "log_loss": 1.0395,
+        "p50_ms_4threads": 8647,
+        "p50_ms_2threads": null,
+        "size_gb": 6.2,
+        "ok": true
+      },
+      {
+        "engine": "ONNX Runtime fp32",
+        "log_loss": 1.0395,
+        "p50_ms_4threads": 6213,
+        "p50_ms_2threads": null,
+        "size_gb": 6.2,
+        "ok": true
+      },
+      {
+        "engine": "ONNX dynamic INT8",
+        "log_loss": 1.0501,
+        "p50_ms_4threads": 3523,
+        "p50_ms_2threads": null,
+        "size_gb": null,
+        "ok": false
+      },
+      {
+        "engine": "PyTorch dynamic INT8",
+        "log_loss": 1.0914,
+        "p50_ms_4threads": 4608,
+        "p50_ms_2threads": null,
+        "size_gb": null,
+        "ok": false
+      },
+      {
+        "engine": "ONNX INT8 per-channel",
+        "log_loss": 1.0987,
+        "p50_ms_4threads": 3468,
+        "p50_ms_2threads": 2863,
+        "size_gb": 1.55,
+        "ok": false
+      },
+      {
+        "engine": "ONNX weight-only 8-bit",
+        "log_loss": 1.04,
+        "p50_ms_4threads": 8289,
+        "p50_ms_2threads": 8466,
+        "size_gb": 2.41,
+        "ok": true
+      },
+      {
+        "engine": "ONNX weight-only 4-bit (deployed)",
+        "log_loss": 1.0393,
+        "p50_ms_4threads": 6631,
+        "p50_ms_2threads": 5639,
+        "size_gb": 1.76,
+        "ok": true,
+        "chosen": true
+      }
+    ],
+    "pick_rule": "fastest engine whose log loss stays within +0.01 of fp32",
+    "size_note": "fp32 size ~6.2 GB = 1.5B parameters x 4 bytes (approximate)"
+  },
+  "deployment": {
+    "platform": "Hugging Face Space (Gradio), free tier on ZeroGPU hardware; model runs on the CPU",
+    "model_format": "ONNX, weight-only 4-bit (MatMulNBits, block 32), 197 MatMul layers quantized",
+    "bug": "os.cpu_count() returned 192 (host CPUs); container quota is far lower, so 192 threads oversubscribed the CPU",
+    "fix": "read the cgroup CPU quota, cap threads (8), disable thread spinning, warm up at startup",
+    "latency_before_ms": 27868,
+    "latency_before_note": "short example, 1 pass, 192 threads",
+    "latency_after_ms": 457,
+    "latency_after_note": "short example, swap-TTA (2 passes), 8 threads",
+    "speedup_approx": "~60x (different short examples)",
+    "cold_start": "free Space sleeps when idle; first visit after sleep takes ~1-3 minutes"
+  },
+  "demo_examples": [
+    {
+      "prompt": "How do I reverse a list in Python?",
+      "response_a": "Use `my_list.reverse()` to reverse it in place, or `my_list[::-1]` to get a reversed copy.",
+      "response_b": "You can't reverse lists in Python.",
+      "swap_tta": false,
+      "model_output": {
+        "A wins": 0.61,
+        "Tie": 0.24,
+        "B wins": 0.15
+      },
+      "source": "real output from the live Space"
+    },
+    {
+      "prompt": "Write a haiku about autumn.",
+      "response_a": "Crimson leaves drifting\nwhispers of the cooling wind\nthe year exhales slow",
+      "response_b": "Autumn is a season that comes after summer and before winter. Leaves fall.",
+      "swap_tta": true,
+      "model_output": {
+        "A wins": 0.48,
+        "B wins": 0.27,
+        "Tie": 0.25
+      },
+      "latency_ms": 457,
+      "source": "real output from the live Space"
+    }
+  ],
+  "team": [
+    {
+      "name": "Dheepak Karan",
+      "role": "Inference + pipeline owner",
+      "did": [
+        "Chose the competition and planned the project",
+        "Built the training pipeline and leak-free data split",
+        "Built v1, swap-TTA and the LightGBM stacker",
+        "Diagnosed the zero-init 'never learns' bug",
+        "GPU benchmarks, CUDA profiling, vLLM, quantization, ONNX",
+        "Deployment: Hugging Face model, live Space, this website"
+      ]
+    },
+    {
+      "name": "Karuniya Premnath",
+      "role": "Training owner (v2 model)",
+      "did": [
+        "Trained the v2 model (30,000 rows) on her Kaggle GPU quota",
+        "Ran the long training jobs, including the run that exposed the zero-init bug and the fixed rerun",
+        "Her v2 model powers the team's best score (1.00281)"
+      ]
+    }
+  ],
+  "notebooks": {
+    "_note": "Kaggle notebooks are private by default. Make each one public before linking it, or the link 404s for visitors.",
+    "items": [
+      {
+        "title": "Training pipeline (v1)",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-train",
+        "owner": "Dheepak",
+        "file": "notebooks/llm-cls-train.ipynb"
+      },
+      {
+        "title": "Training v2",
+        "url": "https://www.kaggle.com/code/karuniyapremnath/llm-cls-train-v2",
+        "owner": "Karuniya",
+        "file": null
+      },
+      {
+        "title": "Inference benchmark + submission",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-infer",
+        "owner": "Dheepak",
+        "file": "notebooks/llm-cls-infer.ipynb"
+      },
+      {
+        "title": "LightGBM stacker",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/llm-cls-stack",
+        "owner": "Dheepak",
+        "file": "notebooks/llm-cls-stack.ipynb"
+      },
+      {
+        "title": "CUDA profiling (E0-E5)",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/cuda-profiling",
+        "owner": "Dheepak",
+        "file": "notebooks/cuda-profiling.ipynb"
+      },
+      {
+        "title": "vLLM feasibility",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/vllm-feasibility",
+        "owner": "Dheepak",
+        "file": "notebooks/vllm-feasibility.ipynb"
+      },
+      {
+        "title": "CPU / ONNX export",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/onnx-export",
+        "owner": "Dheepak",
+        "file": "notebooks/onnx-export.ipynb"
+      },
+      {
+        "title": "Weight-only quantization",
+        "url": "https://www.kaggle.com/code/dheepakkaranes/onnx-weightonly",
+        "owner": "Dheepak",
+        "file": "notebooks/onnx-weightonly.ipynb"
+      }
+    ]
+  },
+  "skills": [
+    "PyTorch",
+    "Hugging Face Transformers",
+    "PEFT / LoRA",
+    "Mixed precision (fp16)",
+    "Length-sorted dynamic batching",
+    "Multi-GPU data parallel",
+    "bitsandbytes INT8 / NF4",
+    "torch.profiler",
+    "CUDA events",
+    "CUDA Graphs",
+    "GQA attention debugging",
+    "vLLM",
+    "ONNX / ONNX Runtime",
+    "Weight-only quantization (MatMulNBits)",
+    "LightGBM stacking",
+    "Test-time augmentation",
+    "Data-leakage control",
+    "Gradio",
+    "Hugging Face Spaces",
+    "cgroup-aware CPU tuning"
+  ]
+}
