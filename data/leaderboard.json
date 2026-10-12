@@ -3,18 +3,18 @@
   "source": "kaggle-cli",
   "competition": "llm-classification-finetuning",
   "team": "Dk",
-  "updated_at": "2026-10-12T04:13:54Z",
+  "updated_at": "2026-10-12T15:35:45Z",
   "on_leaderboard": true,
   "rank": 51,
-  "teams": 250,
+  "teams": 247,
   "teams_approx": false,
   "score": 1.00281,
-  "top_percent": 20.4,
+  "top_percent": 20.6,
   "leader_score": 0.82868,
   "neighbors": [
     {
-      "team": "mseokq",
-      "score": 0.99852,
+      "team": "The Fine Tuners",
+      "score": 0.9995,
       "rank": 48
     },
     {
@@ -77,7 +77,7 @@
       1.1877
     ],
     "counts": [
-      21,
+      20,
       0,
       1,
       4,
@@ -88,12 +88,12 @@
       5,
       2,
       2,
-      9,
-      31,
+      10,
+      30,
       45,
       23,
       18,
-      15,
+      14,
       19,
       22,
       4,
@@ -147,7 +147,7 @@
       "date": "2026-10-12",
       "rank": 51,
       "score": 1.00281,
-      "teams": 250,
+      "teams": 247,
       "on_leaderboard": true,
       "source": "kaggle-cli"
     }
