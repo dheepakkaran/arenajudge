@@ -3,49 +3,49 @@
   "source": "kaggle-cli",
   "competition": "llm-classification-finetuning",
   "team": "Dk",
-  "updated_at": "2026-10-19T13:27:22Z",
+  "updated_at": "2026-10-20T11:45:48Z",
   "on_leaderboard": true,
-  "rank": 61,
-  "teams": 267,
+  "rank": 62,
+  "teams": 278,
   "teams_approx": false,
   "score": 1.00281,
-  "top_percent": 22.8,
+  "top_percent": 22.3,
   "leader_score": 0.82868,
   "neighbors": [
     {
       "team": "Kaggle CompsBench Bot",
       "score": 0.99976,
-      "rank": 58
+      "rank": 59
     },
     {
       "team": "Eddie2021",
       "score": 1.00157,
-      "rank": 59
+      "rank": 60
     },
     {
       "team": "\u0141ukasz B\u0119\u0107",
       "score": 1.00174,
-      "rank": 60
+      "rank": 61
     },
     {
       "team": "Dk",
       "score": 1.00281,
-      "rank": 61
+      "rank": 62
+    },
+    {
+      "team": "Zixiang Sun",
+      "score": 1.00318,
+      "rank": 63
     },
     {
       "team": "pdd111",
       "score": 1.0038,
-      "rank": 62
+      "rank": 64
     },
     {
       "team": "OpenVerb Interns",
       "score": 1.00707,
-      "rank": 63
-    },
-    {
-      "team": "Om Awalekar",
-      "score": 1.01078,
-      "rank": 64
+      "rank": 65
     }
   ],
   "histogram": {
@@ -79,21 +79,21 @@
     "counts": [
       23,
       1,
-      1,
+      2,
       4,
-      3,
+      2,
       3,
       2,
       4,
       7,
       1,
-      3,
-      11,
-      29,
-      49,
-      24,
-      19,
-      14,
+      4,
+      12,
+      32,
+      50,
+      26,
+      20,
+      15,
       19,
       24,
       4,
@@ -204,6 +204,14 @@
       "rank": 61,
       "score": 1.00281,
       "teams": 267,
+      "on_leaderboard": true,
+      "source": "kaggle-cli"
+    },
+    {
+      "date": "2026-10-20",
+      "rank": 62,
+      "score": 1.00281,
+      "teams": 278,
       "on_leaderboard": true,
       "source": "kaggle-cli"
     }
