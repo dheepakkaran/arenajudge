@@ -3,81 +3,81 @@
   "source": "kaggle-cli",
   "competition": "llm-classification-finetuning",
   "team": "Dk",
-  "updated_at": "2026-10-29T13:10:44Z",
+  "updated_at": "2026-10-30T13:03:25Z",
   "on_leaderboard": true,
-  "rank": 74,
-  "teams": 302,
+  "rank": 75,
+  "teams": 301,
   "teams_approx": false,
   "score": 1.00281,
-  "top_percent": 24.5,
-  "leader_score": 0.82755,
+  "top_percent": 24.9,
+  "leader_score": 0.82732,
   "neighbors": [
     {
       "team": "Kaggle CompsBench Bot",
       "score": 0.99976,
-      "rank": 71
+      "rank": 72
     },
     {
       "team": "Eddie2021",
       "score": 1.00157,
-      "rank": 72
+      "rank": 73
     },
     {
       "team": "\u0141ukasz B\u0119\u0107",
       "score": 1.00174,
-      "rank": 73
+      "rank": 74
     },
     {
       "team": "Dk",
       "score": 1.00281,
-      "rank": 74
+      "rank": 75
     },
     {
       "team": "Zixiang Sun",
       "score": 1.00318,
-      "rank": 75
+      "rank": 76
     },
     {
       "team": "oscar paternina",
       "score": 1.00373,
-      "rank": 76
+      "rank": 77
     },
     {
       "team": "pdd111",
       "score": 1.0038,
-      "rank": 77
+      "rank": 78
     }
   ],
   "histogram": {
     "edges": [
-      0.82755,
-      0.84096,
-      0.85437,
-      0.86779,
-      0.8812,
-      0.89461,
-      0.90802,
-      0.92143,
-      0.93485,
-      0.94826,
-      0.96167,
-      0.97508,
-      0.9885,
-      1.00191,
-      1.01532,
-      1.02873,
-      1.04214,
-      1.05556,
-      1.06897,
-      1.08238,
-      1.09579,
-      1.1092,
-      1.12262,
-      1.13603,
+      0.82732,
+      0.84074,
+      0.85416,
+      0.86759,
+      0.88101,
+      0.89443,
+      0.90785,
+      0.92127,
+      0.93469,
+      0.94812,
+      0.96154,
+      0.97496,
+      0.98838,
+      1.0018,
+      1.01522,
+      1.02865,
+      1.04207,
+      1.05549,
+      1.06891,
+      1.08233,
+      1.09575,
+      1.10918,
+      1.1226,
+      1.13602,
       1.14944
     ],
     "counts": [
-      28,
+      29,
       4,
       2,
       4,
@@ -91,14 +91,14 @@
       5,
       11,
       23,
+      38,
       40,
-      41,
-      19,
+      20,
       16,
-      14,
+      13,
       10,
       31,
-      9,
+      10,
       6,
       4
     ]
@@ -284,6 +284,14 @@
       "rank": 74,
       "score": 1.00281,
       "teams": 302,
+      "on_leaderboard": true,
+      "source": "kaggle-cli"
+    },
+    {
+      "date": "2026-10-30",
+      "rank": 75,
+      "score": 1.00281,
+      "teams": 301,
       "on_leaderboard": true,
       "source": "kaggle-cli"
     }
